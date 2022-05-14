@@ -1,0 +1,12 @@
+- name: Introduction
+  href: intro.md
+- name: Get Started
+  items:
+    - name: Installation
+      href: install.md
+- name: FarmCraft Core
+  href: core.md
+- name: FarmCraft Api
+  href: api.md
+- name: FarmCraft WebPortal
+  href: portal.md

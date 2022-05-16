@@ -3,10 +3,14 @@ using Akka.Actor.Setup;
 using Akka.Configuration;
 using Akka.DependencyInjection;
 using FarmCraft.Community.Api.Actors;
+using FarmCraft.Community.Api.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.Configure<AppSettings>(
+    builder.Configuration.GetSection("AppSettings"));
 
 builder.Services.AddSingleton(provider =>
 {
@@ -37,7 +41,8 @@ builder.Services.AddSingleton(provider =>
     return actorSystem.ActorOf(rootProps, "RootActor");
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

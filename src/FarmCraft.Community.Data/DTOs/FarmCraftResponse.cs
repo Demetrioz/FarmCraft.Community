@@ -1,4 +1,7 @@
-﻿namespace FarmCraft.Community.Data.DTOs
+﻿using FarmCraft.Community.Data.Converters;
+using Newtonsoft.Json;
+
+namespace FarmCraft.Community.Data.DTOs
 {
     /// <summary>
     /// The possible results of any FarmCraft request
@@ -23,6 +26,7 @@
         /// <summary>
         /// Whether or not the request was successful
         /// </summary>
+        [JsonConverter(typeof(ResponseStatusConverter))]
         public ResponseStatus Status { get; set; }
 
         /// <summary>

@@ -9,7 +9,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Akka" Version="1.4.38" />
+    <PackageReference Include="Akka.DependencyInjection" Version="1.4.38" />
+    <PackageReference Include="Akka.Remote" Version="1.4.38" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="6.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.17.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.4" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.17.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FarmCraft.Community.Data\FarmCraft.Community.Data.csproj" />
+    <ProjectReference Include="..\FarmCraft.Community.Migrations\FarmCraft.Community.Migrations.csproj" />
   </ItemGroup>
 </Project>

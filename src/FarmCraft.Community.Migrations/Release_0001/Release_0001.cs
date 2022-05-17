@@ -69,7 +69,7 @@ namespace FarmCraft.Community.Migrations.Release_0001
                 { 
                     id = adminGuid, 
                     username = "admin", 
-                    password = "", 
+                    password = "nBFcyVdbEX+eSsoybmuYiVtuzFBG1GdFlTVloi+WTkwsmps5", 
                     reset_required = false, 
                     role_id = adminId,
                     created = now,

@@ -1,10 +1,11 @@
 ﻿using Akka.Actor;
 using FarmCraft.Community.Core.Config;
-using FarmCraft.Community.Core.Utilities;
 using FarmCraft.Community.Data.DTOs;
 using FarmCraft.Community.Data.Entities.Users;
 using FarmCraft.Community.Data.Messages.Authentication;
 using FarmCraft.Community.Data.Repositories.Users;
+using FarmCraft.Community.Services.Encryption;
+using FarmCraft.Community.Utilities;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +21,7 @@ namespace FarmCraft.Community.Core.Actors
         private readonly AuthenticationSettings _settings;
         private readonly IServiceScope _serviceScope;
         private readonly IUserRepository _userRepo;
+        private readonly IEncryptionService _encryptor;
         private readonly ILogger<AuthenticationManager> _logger;
 
         public AuthenticationManager(IServiceProvider provider)
@@ -31,8 +33,11 @@ namespace FarmCraft.Community.Core.Actors
                 .GetRequiredService<IUserRepository>();
             _logger = _serviceScope.ServiceProvider
                 .GetRequiredService<ILogger<AuthenticationManager>>();
+            _encryptor = _serviceScope.ServiceProvider
+                .GetRequiredService<IEncryptionService>();
 
             Receive<AskToLogin>(message => HandleLogin(message));
+            Receive<AskToCreateUser>(message => HandleUserCreation(message));
 
             _logger.LogInformation($"{nameof(AuthenticationManager)} ready for messages");
         }
@@ -62,20 +67,36 @@ namespace FarmCraft.Community.Core.Actors
                 });
         }
 
+        private void HandleUserCreation(AskToCreateUser message)
+        {
+            IActorRef sender = Sender;
+            string requestId = Guid.NewGuid().ToString();
+
+            CreateUser(message)
+                .ContinueWith(result =>
+                {
+                    if (result.Exception != null)
+                        sender.Tell(ActorResponse.Failure(requestId, result.Exception.Message));
+                    else
+                        sender.Tell(ActorResponse.Success(requestId, result.Result));
+                });
+
+        }
+
         //////////////////////////////////////////
         //                Logic                 //
         //////////////////////////////////////////
 
         private async Task<string> Login(AskToLogin message)
         {
-            if (string.IsNullOrEmpty(message.Username))
-                throw new ArgumentNullException(message.Username);
+            if (
+                string.IsNullOrEmpty(message.Username)
+                || string.IsNullOrEmpty(message.Password)
+            )
+                throw new ArgumentNullException(nameof(message));
 
-            if (string.IsNullOrEmpty(message.Password))
-                throw new ArgumentNullException(message.Password);
-
-            string plainTextUsername = Decrypt(message.Username);
-            string plainTextPassword = Decrypt(message.Password);
+            string plainTextUsername = _encryptor.Decrypt(message.Username);
+            string plainTextPassword = _encryptor.Decrypt(message.Password);
 
             User? user = await _userRepo.FindUserByName(plainTextUsername);
             if (user == null || !ValidateHash(user.Password, plainTextPassword))
@@ -85,21 +106,39 @@ namespace FarmCraft.Community.Core.Actors
             return GenerateJWT(user);
         }
 
+        private async Task<User> CreateUser(AskToCreateUser message)
+        {
+            if(
+                string.IsNullOrEmpty(message.Username)
+                || string.IsNullOrEmpty(message.Password)
+                || message.RoleId == 0
+            )
+                throw new ArgumentNullException(nameof(message));
+
+            string plainTextUser = _encryptor.Decrypt(message.Username);
+            string plainTextPassword = _encryptor.Decrypt(message.Password);
+
+            User? existingUser = await _userRepo.FindUserByName(plainTextUser);
+            if (existingUser != null)
+                throw new ArgumentException($"Cannot create user {message.Username}");
+
+            User newUser = await _userRepo.CreateNewUser(new()
+            {
+                Id = Guid.NewGuid(),
+                Username = plainTextUser,
+                Password = GenerateHash(plainTextPassword),
+                ResetRequired = true,
+                RoleId = message.RoleId,
+            });
+
+            newUser.Password = null;
+
+            return newUser;
+        }
+
         //////////////////////////////////////////
         //                Helpers               //
         //////////////////////////////////////////
-
-        private string GeneratePublicKey()
-        {
-            using (RSACryptoServiceProvider publicProvider = new())
-            {
-                RSAUtility.FromXmlString(publicProvider, _settings.PublicKey ?? "");
-                StringWriter publicPemKey = new();
-                RSAUtility.ExportPublicKey(publicProvider, publicPemKey);
-
-                return publicPemKey.ToString();
-            }
-        }
 
         private string GenerateJWT(User user)
         {
@@ -111,6 +150,7 @@ namespace FarmCraft.Community.Core.Actors
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim("sub", user.Id.ToString()),
                 new Claim("name", user.Username),
+                new Claim("role", user.RoleId.ToString()),
                 new Claim("authentication_method", "JWT"),
                 new Claim("reset_required", user.ResetRequired.ToString())
             };
@@ -125,18 +165,12 @@ namespace FarmCraft.Community.Core.Actors
                 issuer: _settings.Issuer,
                 audience: _settings.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.UtcNow.AddMinutes(_settings.TokenDurationMinutes),
                 signingCredentials: signingCredentials
             );
 
             JwtSecurityTokenHandler handler = new();
             return handler.WriteToken(tokenOptions);
-        }
-
-        private JwtSecurityToken DecodeJwt(string jwt)
-        {
-            JwtSecurityTokenHandler handler = new();
-            return handler.ReadJwtToken(jwt);
         }
 
         private string GenerateHash(string key)
@@ -171,19 +205,6 @@ namespace FarmCraft.Community.Core.Actors
                     return false;
 
             return true;
-        }
-
-        private string Decrypt(string key)
-        {
-            using (RSACryptoServiceProvider privateProvider = new())
-            {
-                byte[] encryptedKey = Convert.FromBase64String(key);
-
-                RSAUtility.FromXmlString(privateProvider, _settings.PrivateKey ?? "");
-
-                byte[] decryptedKey = privateProvider.Decrypt(encryptedKey, false);
-                return Encoding.ASCII.GetString(decryptedKey);
-            }
         }
     }
 }

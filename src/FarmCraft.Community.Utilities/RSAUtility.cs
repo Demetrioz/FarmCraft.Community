@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Xml;
 
-namespace FarmCraft.Community.Core.Utilities
+namespace FarmCraft.Community.Utilities
 {
     public static class RSAUtility
     {
@@ -9,12 +9,12 @@ namespace FarmCraft.Community.Core.Utilities
         {
             try
             {
-                RSAParameters parameters = new RSAParameters();
+                RSAParameters parameters = new();
 
-                XmlDocument xmlDoc = new XmlDocument();
+                XmlDocument xmlDoc = new();
                 xmlDoc.LoadXml(xmlString);
 
-                if(xmlDoc.DocumentElement == null)
+                if (xmlDoc.DocumentElement == null)
                     throw new NullReferenceException("No XML Document Element");
 
                 if (xmlDoc.DocumentElement.Name.Equals("RSAKeyValue"))
@@ -153,7 +153,7 @@ namespace FarmCraft.Community.Core.Utilities
 
         private static void EncodeLength(BinaryWriter stream, int length)
         {
-            if (length < 0) throw new ArgumentOutOfRangeException("length", "Length must be non-negative");
+            if (length < 0) throw new ArgumentOutOfRangeException(nameof(length), "Length must be non-negative");
             if (length < 0x80)
             {
                 // Short form

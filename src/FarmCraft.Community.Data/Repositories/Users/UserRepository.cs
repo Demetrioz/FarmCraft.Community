@@ -26,6 +26,15 @@ namespace FarmCraft.Community.Data.Repositories.Users
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<User> CreateNewUser(User user)
+        {
+            User addedUser = (await _dbContext
+                .AddAsync(user)).Entity;
+            await _dbContext.SaveChangesAsync();
+
+            return addedUser;
+        }
+
         public async Task SetLastLogin(Guid userId, DateTimeOffset loginTime)
         {
             User? user = await _dbContext.Users
@@ -35,7 +44,7 @@ namespace FarmCraft.Community.Data.Repositories.Users
             if (user == null)
                 throw new ArgumentException($"Cannot find user {userId}");
 
-            user.LastLogin = loginTime;
+            user.LastLogin = loginTime.UtcDateTime;
             await _dbContext.SaveChangesAsync();
         }
     }

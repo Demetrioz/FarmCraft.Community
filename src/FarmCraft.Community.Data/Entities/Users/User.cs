@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FarmCraft.Community.Data.Entities.Users
@@ -11,6 +12,7 @@ namespace FarmCraft.Community.Data.Entities.Users
         public Guid  Id { get; set; }
         [Column("username")]
         public string Username { get; set; }
+        [JsonIgnore]
         [Column("password")]
         public string Password { get; set; }
         [Column("email")]
@@ -20,7 +22,7 @@ namespace FarmCraft.Community.Data.Entities.Users
         [Column("reset_required")]
         public bool ResetRequired { get; set; }
         [Column("last_login")]
-        public DateTimeOffset LastLogin { get; set; }
+        public DateTimeOffset? LastLogin { get; set; }
 
         [Column("role_id")]
         public int RoleId { get; set; }

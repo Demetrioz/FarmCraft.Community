@@ -11,7 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FarmCraft.Community.Data", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FarmCraft.Community.WebPortal", "FarmCraft.Community.WebPortal\FarmCraft.Community.WebPortal.csproj", "{547ACB5C-7381-4E7B-A234-B6B26C4134C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FarmCraft.Community.Migrations", "FarmCraft.Community.Migrations\FarmCraft.Community.Migrations.csproj", "{B90478F9-01DE-43F7-90AF-33922989F483}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FarmCraft.Community.Migrations", "FarmCraft.Community.Migrations\FarmCraft.Community.Migrations.csproj", "{B90478F9-01DE-43F7-90AF-33922989F483}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FarmCraft.Community.Tests", "FarmCraft.Community.Tests\FarmCraft.Community.Tests.csproj", "{C6DF49DC-B791-4539-9BE9-16C4D115CEE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FarmCraft.Community.Services", "FarmCraft.Community.Services\FarmCraft.Community.Services.csproj", "{019110F2-CBA4-4205-85A7-9A81FB3D8B89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FarmCraft.Community.Utilities", "FarmCraft.Community.Utilities\FarmCraft.Community.Utilities.csproj", "{0CDDB84A-8B6C-4ED9-ADD0-05242B1E59E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +45,18 @@ Global
 		{B90478F9-01DE-43F7-90AF-33922989F483}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B90478F9-01DE-43F7-90AF-33922989F483}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B90478F9-01DE-43F7-90AF-33922989F483}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6DF49DC-B791-4539-9BE9-16C4D115CEE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6DF49DC-B791-4539-9BE9-16C4D115CEE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6DF49DC-B791-4539-9BE9-16C4D115CEE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6DF49DC-B791-4539-9BE9-16C4D115CEE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{019110F2-CBA4-4205-85A7-9A81FB3D8B89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{019110F2-CBA4-4205-85A7-9A81FB3D8B89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{019110F2-CBA4-4205-85A7-9A81FB3D8B89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{019110F2-CBA4-4205-85A7-9A81FB3D8B89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CDDB84A-8B6C-4ED9-ADD0-05242B1E59E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CDDB84A-8B6C-4ED9-ADD0-05242B1E59E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CDDB84A-8B6C-4ED9-ADD0-05242B1E59E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CDDB84A-8B6C-4ED9-ADD0-05242B1E59E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

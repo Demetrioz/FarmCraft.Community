@@ -24,5 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FarmCraft.Community.Data\FarmCraft.Community.Data.csproj" />
     <ProjectReference Include="..\FarmCraft.Community.Migrations\FarmCraft.Community.Migrations.csproj" />
+    <ProjectReference Include="..\FarmCraft.Community.Services\FarmCraft.Community.Services.csproj" />
+    <ProjectReference Include="..\FarmCraft.Community.Utilities\FarmCraft.Community.Utilities.csproj" />
   </ItemGroup>
 </Project>

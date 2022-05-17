@@ -6,6 +6,7 @@ namespace FarmCraft.Community.Data.Repositories.Users
     {
         Task<User?> FindUserById(Guid id);
         Task<User?> FindUserByName(string username);
+        Task<User> CreateNewUser(User user);
         Task SetLastLogin(Guid userId, DateTimeOffset loginTime);
     }
 }

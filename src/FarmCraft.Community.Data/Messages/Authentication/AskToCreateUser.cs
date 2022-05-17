@@ -2,9 +2,9 @@
 {
     public class AskToCreateUser : IAuthenticationMessage
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public int RoleId { get; set; }
+        public string Username { get; private set; }
+        public string Password { get; private set; }
+        public int RoleId { get; private set; }
 
         public AskToCreateUser(string username, string password, int roleId)
         {

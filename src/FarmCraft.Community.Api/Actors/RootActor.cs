@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using FarmCraft.Community.Api.Config;
+using FarmCraft.Community.Data.DTOs;
 using Microsoft.Extensions.Options;
 
 namespace FarmCraft.Community.Api.Actors
@@ -19,12 +20,22 @@ namespace FarmCraft.Community.Api.Actors
 
         private void ForwardToCore(object message)
         {
-            object result = _server.Ask(
-                message, 
-                TimeSpan.FromSeconds(_settings.DefaultActorWaitSeconds)
-            ).Result;
+            try
+            {
+                object result = _server.Ask(
+                    message,
+                    TimeSpan.FromSeconds(_settings.ForwarderActorWaitSeconds)
+                ).Result;
 
-            Sender.Tell(result);
+                Sender.Tell(result);
+            }
+            catch(Exception ex)
+            {
+                Sender.Tell(ActorResponse.Failure(
+                    Guid.NewGuid().ToString(),
+                    ex.Message
+                ));
+            }
         }
     }
 }

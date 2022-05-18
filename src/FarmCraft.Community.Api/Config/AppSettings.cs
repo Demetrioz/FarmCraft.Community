@@ -4,5 +4,6 @@
     {
         public string CoreActorUri { get; set; }
         public int DefaultActorWaitSeconds { get; set; }
+        public int ForwarderActorWaitSeconds { get; set; }
     }
 }

@@ -7,10 +7,16 @@ using FarmCraft.Community.Api.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//////////////////////////////////////////
+//          Configure Settings          //
+//////////////////////////////////////////
 
 builder.Services.Configure<AppSettings>(
     builder.Configuration.GetSection("AppSettings"));
+
+//////////////////////////////////////////
+//             Actor Setup              //
+//////////////////////////////////////////
 
 builder.Services.AddSingleton(provider =>
 {
@@ -41,19 +47,31 @@ builder.Services.AddSingleton(provider =>
     return actorSystem.ActorOf(rootProps, "RootActor");
 });
 
+//////////////////////////////////////////
+//          Add API Components          //
+//////////////////////////////////////////
+
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//////////////////////////////////////////
+//             Add Services             //
+//////////////////////////////////////////
+
+// builder.Services.AddTransient<>()
+
+//////////////////////////////////////////
+//      Configure Request Pipeline      //
+//////////////////////////////////////////
 
 var app = builder.Build();
 
 // TODO: Shutdown the actor system when the app stops
 // app.Lifetime.ApplicationStopping.Register(() => { });
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

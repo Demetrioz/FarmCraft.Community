@@ -2,6 +2,7 @@ using Akka.Actor;
 using Akka.Actor.Setup;
 using Akka.Configuration;
 using Akka.DependencyInjection;
+using FarmCraft.Community.Data.Context;
 using FluentMigrator.Runner;
 
 namespace FarmCraft.Community.Core
@@ -31,6 +32,10 @@ namespace FarmCraft.Community.Core
             }
 
             _logger.LogInformation("Migrations Completed");
+
+            FarmCraftContext.SetTriggers();
+
+            _logger.LogInformation("Triggers activated");
 
             Akka.Configuration.Config hocon = ConfigurationFactory.ParseString(@"
             akka {  

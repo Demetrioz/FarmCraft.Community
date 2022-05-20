@@ -12,12 +12,14 @@
     <PackageReference Include="Akka" Version="1.4.38" />
     <PackageReference Include="Akka.DependencyInjection" Version="1.4.38" />
     <PackageReference Include="Akka.Remote" Version="1.4.38" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.5" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FarmCraft.Community.Core\FarmCraft.Community.Core.csproj" />
     <ProjectReference Include="..\FarmCraft.Community.Data\FarmCraft.Community.Data.csproj" />
     <ProjectReference Include="..\FarmCraft.Community.Services\FarmCraft.Community.Services.csproj" />
   </ItemGroup>

@@ -2,6 +2,7 @@
 using Akka.DependencyInjection;
 using FarmCraft.Community.Core.Actors;
 using FarmCraft.Community.Data.Messages.Authentication;
+using FarmCraft.Community.Data.Messages.Roles;
 
 namespace FarmCraft.Community.Core
 {
@@ -22,6 +23,9 @@ namespace FarmCraft.Community.Core
             {
                 case IAuthenticationMessage:
                     Sender.Tell(_authManager.Ask(message, TimeSpan.FromSeconds(5)).Result);
+                    break;
+                case IRoleMessage:
+                    HandleWithInstanceOf<RoleActor>(message);
                     break;
                 default:
                     break;

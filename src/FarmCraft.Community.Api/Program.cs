@@ -4,6 +4,13 @@ using Akka.Configuration;
 using Akka.DependencyInjection;
 using FarmCraft.Community.Api.Actors;
 using FarmCraft.Community.Api.Config;
+using FarmCraft.Community.Api.Policies.AdminPolicy;
+using FarmCraft.Community.Core.Config;
+using FarmCraft.Community.Services.Cache;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +18,13 @@ var builder = WebApplication.CreateBuilder(args);
 //          Configure Settings          //
 //////////////////////////////////////////
 
+AuthenticationSettings authSettings = new AuthenticationSettings();
+builder.Configuration.Bind("AuthenticationSettings", authSettings);
+
 builder.Services.Configure<AppSettings>(
     builder.Configuration.GetSection("AppSettings"));
+builder.Services.Configure<CacheSettings>(
+    builder.Configuration.GetSection("CacheSettings"));
 
 //////////////////////////////////////////
 //             Actor Setup              //
@@ -58,10 +70,39 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //////////////////////////////////////////
-//             Add Services             //
+//    Authentication & Authorization    //
 //////////////////////////////////////////
 
-// builder.Services.AddTransient<>()
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = authSettings.Issuer,
+            ValidAudience = authSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(authSettings.SecretKey ?? ""))
+        };
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+        policy.Requirements.Add(new AdminRequirement()));
+});
+
+//////////////////////////////////////////
+//        Add Additional Services       //
+//////////////////////////////////////////
+
+//builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<IAuthorizationHandler, AdminHandler>();
+builder.Services.AddSingleton<ICacheService, FarmCraftCache>();
 
 //////////////////////////////////////////
 //      Configure Request Pipeline      //
@@ -80,6 +121,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

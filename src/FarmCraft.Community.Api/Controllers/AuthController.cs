@@ -3,6 +3,7 @@ using FarmCraft.Community.Api.Config;
 using FarmCraft.Community.Data.DTOs;
 using FarmCraft.Community.Data.DTOs.Requests;
 using FarmCraft.Community.Data.Messages.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -40,6 +41,7 @@ namespace FarmCraft.Community.Api.Controllers
         }
 
         [HttpPost("user")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> CreateUser([FromBody] NewUserRequest newUser)
         {
             try

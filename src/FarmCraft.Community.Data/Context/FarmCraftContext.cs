@@ -21,6 +21,7 @@ namespace FarmCraft.Community.Data.Context
 
         // User tables
         public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         // Maintenance tables
         public DbSet<FarmCraftLog> Logs { get; set; }

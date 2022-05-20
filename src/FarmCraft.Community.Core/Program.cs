@@ -1,6 +1,7 @@
 using FarmCraft.Community.Core;
 using FarmCraft.Community.Core.Config;
 using FarmCraft.Community.Data.Context;
+using FarmCraft.Community.Data.Repositories.Roles;
 using FarmCraft.Community.Data.Repositories.Users;
 using FarmCraft.Community.Migrations;
 using FarmCraft.Community.Migrations.Release_0001;
@@ -34,11 +35,13 @@ IHost host = Host.CreateDefaultBuilder(args)
             new List<Type>() { typeof(Release_0001) }
         );
 
+        services.AddTransient<IUserRepository, UserRepository>();
+        services.AddTransient<IRoleRepository, RoleRepository>();
+
         //////////////////////////////////////////
         //             Add Services             //
         //////////////////////////////////////////
 
-        services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IEncryptionService, EncryptionService>();
 
         //////////////////////////////////////////

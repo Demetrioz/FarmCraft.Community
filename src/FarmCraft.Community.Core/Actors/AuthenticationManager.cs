@@ -5,7 +5,6 @@ using FarmCraft.Community.Data.Entities.Users;
 using FarmCraft.Community.Data.Messages.Authentication;
 using FarmCraft.Community.Data.Repositories.Users;
 using FarmCraft.Community.Services.Encryption;
-using FarmCraft.Community.Utilities;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -19,21 +18,21 @@ namespace FarmCraft.Community.Core.Actors
     public class AuthenticationManager : ReceiveActor
     {
         private readonly AuthenticationSettings _settings;
-        private readonly IServiceScope _serviceScope;
+        private readonly IServiceScope _scope;
         private readonly IUserRepository _userRepo;
         private readonly IEncryptionService _encryptor;
         private readonly ILogger<AuthenticationManager> _logger;
 
         public AuthenticationManager(IServiceProvider provider)
         {
-            _serviceScope = provider.CreateScope();
-            _settings = _serviceScope.ServiceProvider
+            _scope = provider.CreateScope();
+            _settings = _scope.ServiceProvider
                 .GetRequiredService<IOptions<AuthenticationSettings>>().Value;
-            _userRepo = _serviceScope.ServiceProvider
+            _userRepo = _scope.ServiceProvider
                 .GetRequiredService<IUserRepository>();
-            _logger = _serviceScope.ServiceProvider
+            _logger = _scope.ServiceProvider
                 .GetRequiredService<ILogger<AuthenticationManager>>();
-            _encryptor = _serviceScope.ServiceProvider
+            _encryptor = _scope.ServiceProvider
                 .GetRequiredService<IEncryptionService>();
 
             Receive<AskToLogin>(message => HandleLogin(message));
@@ -44,7 +43,7 @@ namespace FarmCraft.Community.Core.Actors
 
         protected override void PostStop()
         {
-            _serviceScope.Dispose();
+            _scope.Dispose();
             _logger.LogInformation($"{nameof(AuthenticationManager)} scope disposed");
         }
 

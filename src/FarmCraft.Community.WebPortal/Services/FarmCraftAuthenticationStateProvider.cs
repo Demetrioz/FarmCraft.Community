@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -11,10 +10,7 @@ namespace FarmCraft.Community.WebPortal.Services
     {
         private readonly FarmCraftApiService _apiService;
 
-        public FarmCraftAuthenticationStateProvider(
-            FarmCraftApiService apiService, 
-            ProtectedSessionStorage storage
-        )
+        public FarmCraftAuthenticationStateProvider(FarmCraftApiService apiService)
         {
             _apiService = apiService;
         }

@@ -37,7 +37,6 @@ namespace FarmCraft.Community.WebPortal.Services
             {
                 JwtSecurityTokenHandler handler = new();
                 _apiToken = handler.ReadJwtToken(token);
-                //return _apiToken;
             }
             catch (Exception ex)
             {
@@ -66,7 +65,6 @@ namespace FarmCraft.Community.WebPortal.Services
                     string jwtString = (string)responseObject.Data;
                     JwtSecurityTokenHandler handler = new();
                     _apiToken = handler.ReadJwtToken(jwtString);
-                    //return _apiToken;
                 }
                 else
                 {

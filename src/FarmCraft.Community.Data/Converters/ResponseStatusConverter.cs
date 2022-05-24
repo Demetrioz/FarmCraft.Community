@@ -55,7 +55,7 @@ namespace FarmCraft.Community.Data.Converters
                 switch(status)
                 {
                     case ResponseStatus.Success:
-                        writer.WriteValue("Failure");
+                        writer.WriteValue("Success");
                         break;
                     case ResponseStatus.Failure:
                         writer.WriteValue("Failure");

@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FarmCraft.Community.Migrati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FarmCraft.Community.Tests", "FarmCraft.Community.Tests\FarmCraft.Community.Tests.csproj", "{C6DF49DC-B791-4539-9BE9-16C4D115CEE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FarmCraft.Community.Services", "FarmCraft.Community.Services\FarmCraft.Community.Services.csproj", "{019110F2-CBA4-4205-85A7-9A81FB3D8B89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FarmCraft.Community.Services", "FarmCraft.Community.Services\FarmCraft.Community.Services.csproj", "{019110F2-CBA4-4205-85A7-9A81FB3D8B89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FarmCraft.Community.Utilities", "FarmCraft.Community.Utilities\FarmCraft.Community.Utilities.csproj", "{0CDDB84A-8B6C-4ED9-ADD0-05242B1E59E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FarmCraft.Community.Utilities", "FarmCraft.Community.Utilities\FarmCraft.Community.Utilities.csproj", "{0CDDB84A-8B6C-4ED9-ADD0-05242B1E59E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

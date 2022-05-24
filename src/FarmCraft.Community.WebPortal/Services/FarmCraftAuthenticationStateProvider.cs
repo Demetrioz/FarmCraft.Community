@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -9,58 +10,41 @@ namespace FarmCraft.Community.WebPortal.Services
     public class FarmCraftAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly FarmCraftApiService _apiService;
-        //private JwtSecurityToken? _userToken { get; set; }
 
-        public FarmCraftAuthenticationStateProvider(FarmCraftApiService apiService)
+        public FarmCraftAuthenticationStateProvider(
+            FarmCraftApiService apiService, 
+            ProtectedSessionStorage storage
+        )
         {
             _apiService = apiService;
-            //_apiService.TokenUpdated += HandleTokenChange;
         }
-
-        //private void HandleTokenChange(object? sender, JwtSecurityToken token)
-        //{
-        //    NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-        //}
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            //ClaimsIdentity identity = new();
-            //JwtSecurityToken? token = _apiService.UserToken;
-
             ClaimsIdentity identity = _apiService.UserToken != null
                 ? new ClaimsIdentity(_apiService.UserToken.Claims, "ApiAuth")
                 : new();
 
-            //if(_apiService.UserToken != null)
-            //{
-            //    // Do some logic
-            //    try
-            //    {
-            //        var claims = new[]
-            //        {
-            //            new Claim("sub", "Something"),
-            //            new Claim("phone", "SomethingEsle")
-            //        };
-            //        identity = new ClaimsIdentity(claims, "ApiAuth");
-            //    }
-            //    catch(Exception ex)
-            //    {
-
-            //    }
-            //}
-
-            //return Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity)));
-
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }
 
-        public async Task Login()
+        public void Login(string token)
         {
-            await _apiService.Login("", "");
+            _apiService.Login(token);
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
-        public async Task Logout()
+        public async Task<string> Login(string username, string password)
+        {
+            await _apiService.Login(username, password);
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+
+            JwtSecurityTokenHandler handler = new();
+            string token = handler.WriteToken(_apiService.UserToken);
+            return token;
+        }
+
+        public void Logout()
         {
             _apiService.Logout();
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());

@@ -10,7 +10,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="MudBlazor" Version="6.0.10" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.17.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FarmCraft.Community.Data\FarmCraft.Community.Data.csproj" />
+    <ProjectReference Include="..\FarmCraft.Community.Services\FarmCraft.Community.Services.csproj" />
   </ItemGroup>
 
 </Project>

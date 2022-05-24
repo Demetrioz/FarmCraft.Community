@@ -1,0 +1,33 @@
+﻿@inherits LoginBase
+
+<PageTitle>Login</PageTitle>
+
+<div id=login_root class=base>
+    <div id="login_container" class=container>
+        <img src=img/FarmCraft.png alt=FarmCraft class=logo />
+        <div id=input class=input>
+            <MudTextField 
+                @bind-Value="Username" 
+                Label="Username" 
+                Variant="Variant.Outlined" 
+                Margin="Margin.Normal"
+            />
+            <MudTextField 
+                @bind-Value="Password" 
+                Label="Password" 
+                Variant="Variant.Outlined" 
+                Margin="Margin.Normal"
+                InputType="InputType.Password"
+                OnKeyDown="HandleKeyDown"
+            />
+            <MudButton
+                Variant="Variant.Filled"
+                Color="Color.Primary"
+                FullWidth="true"
+                OnClick="HandleLogin"
+            >
+                Login
+            </MudButton>
+        </div>
+    </div>
+</div>

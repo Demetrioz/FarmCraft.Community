@@ -11,11 +11,11 @@ namespace FarmCraft.Community.WebPortal.Pages
     public class LoginBase : ComponentBase
     {
         [Inject]
-        private FarmCraftAuthenticationStateProvider AuthProvider { get; set; }
+        private FarmCraftAuthenticationStateProvider _authProvider { get; set; }
         [Inject]
-        private ProtectedSessionStorage ProtectedSessionStorage { get; set; }
+        private ProtectedSessionStorage _protectedSessionStorage { get; set; }
         [Inject]
-        private ISnackbar SnackBar { get; set; }
+        private ISnackbar _snackBar { get; set; }
 
         protected string Username { get; set; }
         protected string Password { get; set; }
@@ -23,16 +23,10 @@ namespace FarmCraft.Community.WebPortal.Pages
         protected override async Task OnInitializedAsync()
         {
             ProtectedBrowserStorageResult<string> token = await
-                ProtectedSessionStorage.GetAsync<string>("token");
+                _protectedSessionStorage.GetAsync<string>("token");
 
             if (token.Success && token.Value != null)
-                AuthProvider.Login(token.Value);
-        }
-
-        protected void HandleKeyDown(KeyboardEventArgs args)
-        {
-            if (args.Key == "Enter")
-                HandleLogin();
+                _authProvider.Login(token.Value);
         }
 
         protected async Task HandleLogin()
@@ -41,16 +35,16 @@ namespace FarmCraft.Community.WebPortal.Pages
             {
                 if(string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
                 {
-                    SnackBar.Add("Username and password required", Severity.Error);
+                    _snackBar.Add("Username and password required", Severity.Error);
                     return;
                 }
                     
-                string token = await AuthProvider.Login(Username, Password);
-                await ProtectedSessionStorage.SetAsync("token", token);
+                string token = await _authProvider.Login(Username, Password);
+                await _protectedSessionStorage.SetAsync("token", token);
             }
             catch (Exception ex)
             {
-                SnackBar.Add(ex.Message, Severity.Error);
+                _snackBar.Add(ex.Message, Severity.Error);
             }
         }
     }

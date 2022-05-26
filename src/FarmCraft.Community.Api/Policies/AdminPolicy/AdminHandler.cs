@@ -28,7 +28,10 @@ namespace FarmCraft.Community.Api.Policies.AdminPolicy
         )
         {
             string? role = context.User.Claims
-                .Where(c => c.Type == "role")
+                .Where(c =>
+                    c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" 
+                    || c.Type == "role"
+                )
                 .Select(c => c.Value)
                 .FirstOrDefault();
 

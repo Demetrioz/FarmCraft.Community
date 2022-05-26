@@ -1,24 +1,28 @@
 ﻿using FarmCraft.Community.WebPortal.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace FarmCraft.Community.WebPortal.Components.FarmCraftAppBar
 {
     public class FarmCraftAppBarBase : ComponentBase
     {
         [Inject]
-        private NavigationManager NavigationManager { get; set; }
+        private NavigationManager _navigationManager { get; set; }
         [Inject]
-        private FarmCraftAuthenticationStateProvider AuthProvider { get; set; }
+        private FarmCraftAuthenticationStateProvider _authProvider { get; set; }
+        [Inject]
+        private ProtectedSessionStorage _protectedSessionStorage { get; set; }
 
-        protected void HandleLogout()
+        protected async Task HandleLogout()
         {
+            await _protectedSessionStorage.DeleteAsync("token");
             NavigateHome();
-            AuthProvider.Logout();
+            _authProvider.Logout();
         }
 
         protected void NavigateHome()
         {
-            NavigationManager.NavigateTo("/", true);
+            _navigationManager.NavigateTo("/", true);
         }
     }
 }

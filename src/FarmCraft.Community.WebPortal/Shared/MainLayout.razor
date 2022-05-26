@@ -1,31 +1,28 @@
-﻿@*@using FarmCraft.Community.WebPortal.Services*@
+﻿@using FarmCraft.Community.WebPortal.Components.FarmCraftAppBar
+@using FarmCraft.Community.WebPortal.Components.FarmCraftDrawer
+@using FarmCraft.Community.WebPortal.Pages.Login
 
-@*@inherits LayoutComponentBase*@
 @inherits MainLayoutBase
-
-@*@inject FarmCraftAuthenticationStateProvider AuthStateProvider*@
 
 <PageTitle>FarmCraft.Community.WebPortal</PageTitle>
 
-<AuthorizeView>
-    <Authorized>
-        <div class="page">
-            <div class="sidebar">
-                <NavMenu />
-            </div>
+<MudThemeProvider Theme="FarmCraftTheme"/>
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-            <main>
-                <div class="top-row px-4">
-                    <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-                </div>
-
-                <article class="content px-4">
+<MudLayout>
+    <MudMainContent>
+        <AuthorizeView>
+            <Authorized>
+                <FarmCraftAppBar />
+                <FarmCraftDrawer />
+                <div class="content">
                     @Body
-                </article>
-            </main>
-        </div>
-    </Authorized>
-    <NotAuthorized>
-        <FarmCraft.Community.WebPortal.Pages.Login />
-    </NotAuthorized>
-</AuthorizeView>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <Login />
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudMainContent>
+</MudLayout>

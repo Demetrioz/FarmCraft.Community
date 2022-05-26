@@ -1,0 +1,21 @@
+﻿@inherits FarmCraftDrawerBase
+
+<MudDrawerContainer>
+    <MudDrawer 
+        @bind-Open="Open" 
+        Fixed="false" 
+        Elevation="1" 
+        Variant="DrawerVariant.Mini" 
+        OpenMiniOnHover="true" 
+        Style="@DrawerHeight"
+    >
+        <MudNavMenu>
+            <MudNavLink 
+                Match="NavLinkMatch.All" 
+                Icon="@Icons.Filled.DeviceHub"
+            >
+                Devices
+            </MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+</MudDrawerContainer>

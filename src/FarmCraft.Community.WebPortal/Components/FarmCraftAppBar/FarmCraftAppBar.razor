@@ -1,0 +1,19 @@
+﻿@inherits FarmCraftAppBarBase
+
+<MudAppBar Color="Color.Primary">
+    <img 
+        src=img/FarmCraft.png 
+        alt=FarmCraft 
+        class=logo 
+        @onclick="@NavigateHome"
+    />
+    <MudSpacer />
+    <MudButton 
+        Variant="Variant.Text" 
+        DisableElevation="true" 
+        Color="Color.Secondary"
+        OnClick="HandleLogout"
+    >
+        Logout
+    </MudButton>
+</MudAppBar>

@@ -1,6 +1,6 @@
+using FarmCraft.Community.Core.Config;
 using FarmCraft.Community.Services.Encryption;
 using FarmCraft.Community.WebPortal.Config;
-using FarmCraft.Community.WebPortal.Data;
 using FarmCraft.Community.WebPortal.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
@@ -16,6 +16,7 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.Configure<AuthenticationSettings>(builder.Configuration.GetSection("AuthenticationSettings"));
 builder.Services.Configure<EncryptionSettings>(builder.Configuration.GetSection("EncryptionSettings"));
 
 //////////////////////////////////////////

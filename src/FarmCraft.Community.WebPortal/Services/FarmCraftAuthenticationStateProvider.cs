@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using FarmCraft.Community.Core.Config;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -8,41 +10,68 @@ namespace FarmCraft.Community.WebPortal.Services
 
     public class FarmCraftAuthenticationStateProvider : AuthenticationStateProvider
     {
+        private readonly AuthenticationSettings _authSettings;
         private readonly FarmCraftApiService _apiService;
+        private JwtSecurityToken? _token;
 
-        public FarmCraftAuthenticationStateProvider(FarmCraftApiService apiService)
+        public FarmCraftAuthenticationStateProvider(
+            IOptions<AuthenticationSettings> authSettings,
+            FarmCraftApiService apiService
+        )
         {
+            _authSettings = authSettings.Value;
             _apiService = apiService;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            ClaimsIdentity identity = _apiService.UserToken != null
-                ? new ClaimsIdentity(_apiService.UserToken.Claims, "ApiAuth")
+            ClaimsIdentity identity = _token != null
+                ? new ClaimsIdentity(_token.Claims, "ApiAuth")
                 : new();
 
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }
 
-        public void Login(string token)
+        public void HydrateToken(string token)
         {
-            _apiService.Login(token);
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            try
+            {
+                DateTimeOffset now = DateTimeOffset.Now;
+
+                JwtSecurityTokenHandler handler = new();
+                _token = handler.ReadJwtToken(token);
+
+                if (
+                    _token.ValidFrom > now
+                    || _token.ValidTo <= now
+                    || _token.Issuer != _authSettings.Issuer
+                    || _token.Audiences.First() != _authSettings.Audience
+                )
+                    throw new UnauthorizedAccessException();
+            }
+            catch (Exception ex) 
+            {
+                _token = null;
+            }
+            finally
+            {
+                NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            }
         }
 
         public async Task<string> Login(string username, string password)
         {
-            await _apiService.Login(username, password);
+            _token = await _apiService.Login(username, password);
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
 
             JwtSecurityTokenHandler handler = new();
-            string token = handler.WriteToken(_apiService.UserToken);
+            string token = handler.WriteToken(_token);
             return token;
         }
 
         public void Logout()
         {
-            _apiService.Logout();
+            _token = null;
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
     }

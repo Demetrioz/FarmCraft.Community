@@ -14,7 +14,6 @@ namespace FarmCraft.Community.WebPortal.Services
         private readonly IEncryptionService _encryptor;
         private readonly HttpClient _httpClient;
         private readonly ILogger<FarmCraftApiService> _logger;
-        private JwtSecurityToken? _apiToken { get; set; }
 
         public FarmCraftApiService(
             IEncryptionService encryptor,
@@ -29,23 +28,7 @@ namespace FarmCraft.Community.WebPortal.Services
             _logger = logger;
         }
 
-        public JwtSecurityToken? UserToken { get { return _apiToken; } }
-
-        public void Login(string token)
-        {
-            try
-            {
-                JwtSecurityTokenHandler handler = new();
-                _apiToken = handler.ReadJwtToken(token);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Invalid token: {token}");
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task Login(string username, string password)
+        public async Task<JwtSecurityToken> Login(string username, string password)
         {
             string requestBody = JsonConvert.SerializeObject(new LoginRequest
             {
@@ -64,7 +47,7 @@ namespace FarmCraft.Community.WebPortal.Services
                 {
                     string jwtString = (string)responseObject.Data;
                     JwtSecurityTokenHandler handler = new();
-                    _apiToken = handler.ReadJwtToken(jwtString);
+                    return handler.ReadJwtToken(jwtString);
                 }
                 else
                 {
@@ -78,11 +61,6 @@ namespace FarmCraft.Community.WebPortal.Services
                 _logger.LogError($"Unsuccessful login: {response.StatusCode} || {responseContent}");
                 throw new Exception(responseContent);
             }
-        }
-
-        public void Logout()
-        {
-            _apiToken = null;
         }
     }
 }

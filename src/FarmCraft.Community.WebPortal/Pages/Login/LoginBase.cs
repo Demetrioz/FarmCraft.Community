@@ -1,6 +1,5 @@
 ﻿using FarmCraft.Community.WebPortal.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using MudBlazor;
 
@@ -26,7 +25,7 @@ namespace FarmCraft.Community.WebPortal.Pages
                 _protectedSessionStorage.GetAsync<string>("token");
 
             if (token.Success && token.Value != null)
-                _authProvider.Login(token.Value);
+                _authProvider.HydrateToken(token.Value);
         }
 
         protected async Task HandleLogin()

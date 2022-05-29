@@ -1,12 +1,11 @@
 ﻿using Akka.Actor;
-using FarmCraft.Community.Data.DTOs;
 using FarmCraft.Community.Data.Entities.Users;
 using FarmCraft.Community.Data.Messages.Roles;
 using FarmCraft.Community.Data.Repositories.Roles;
 
 namespace FarmCraft.Community.Core.Actors
 {
-    public class RoleActor : ReceiveActor
+    public class RoleActor : FarmCraftActor
     {
         private readonly IServiceScope _scope;
         private readonly IRoleRepository _roleRepo;
@@ -20,8 +19,8 @@ namespace FarmCraft.Community.Core.Actors
             _logger = _scope.ServiceProvider
                 .GetRequiredService<ILogger<RoleActor>>();
 
+            Receive<AskForRole>(message => HandleWith(GetRole, message));
             Receive<AskForRoles>(message => HandleGetRoles(message));
-            Receive<AskForRole>(message => HandleGetRole(message));
 
             _logger.LogInformation($"{nameof(RoleActor)} ready for messages");
         }
@@ -41,29 +40,8 @@ namespace FarmCraft.Community.Core.Actors
             IActorRef sender = Sender;
             string requestId = Guid.NewGuid().ToString();
 
-            GetAllRoles()
-                .ContinueWith(result =>
-                {
-                    if (result.Exception != null)
-                        sender.Tell(ActorResponse.Failure(requestId, result.Exception.Message));
-                    else
-                        sender.Tell(ActorResponse.Success(requestId, result.Result));
-                });
-        }
-
-        private void HandleGetRole(AskForRole message)
-        {
-            IActorRef sender = Sender;
-            string requestId = Guid.NewGuid().ToString();
-
-            GetRole(message)
-                .ContinueWith(result =>
-                {
-                    if (result.Exception != null)
-                        sender.Tell(ActorResponse.Failure(requestId, result.Exception.Message));
-                    else
-                        sender.Tell(ActorResponse.Success(requestId, result.Result));
-                });
+            GetAllRoles().ContinueWith(result =>
+                HandleResult(result, sender, requestId));
         }
 
         //////////////////////////////////////////

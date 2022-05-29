@@ -1,6 +1,4 @@
-﻿using Akka.Actor;
-using FarmCraft.Community.Core.Config;
-using FarmCraft.Community.Data.DTOs;
+﻿using FarmCraft.Community.Core.Config;
 using FarmCraft.Community.Data.Entities.Users;
 using FarmCraft.Community.Data.Messages.Authentication;
 using FarmCraft.Community.Data.Repositories.Users;
@@ -15,7 +13,7 @@ using System.Text;
 
 namespace FarmCraft.Community.Core.Actors
 {
-    public class AuthenticationManager : ReceiveActor
+    public class AuthenticationManager : FarmCraftActor
     {
         private readonly AuthenticationSettings _settings;
         private readonly IServiceScope _scope;
@@ -35,8 +33,8 @@ namespace FarmCraft.Community.Core.Actors
             _encryptor = _scope.ServiceProvider
                 .GetRequiredService<IEncryptionService>();
 
-            Receive<AskToLogin>(message => HandleLogin(message));
-            Receive<AskToCreateUser>(message => HandleUserCreation(message));
+            Receive<AskToLogin>(message => HandleWith(Login, message));
+            Receive<AskToCreateUser>(message => HandleWith(CreateUser, message));
 
             _logger.LogInformation($"{nameof(AuthenticationManager)} ready for messages");
         }
@@ -45,41 +43,6 @@ namespace FarmCraft.Community.Core.Actors
         {
             _scope.Dispose();
             _logger.LogInformation($"{nameof(AuthenticationManager)} scope disposed");
-        }
-
-        //////////////////////////////////////////
-        //               Handlers               //
-        //////////////////////////////////////////
-
-        private void HandleLogin(AskToLogin message)
-        {
-            IActorRef sender = Sender;
-            string requestId = Guid.NewGuid().ToString();
-
-            Login(message)
-                .ContinueWith(result =>
-                {
-                    if (result.Exception != null)
-                        sender.Tell(ActorResponse.Failure(requestId, result.Exception.Message));
-                    else
-                        sender.Tell(ActorResponse.Success(requestId, result.Result));
-                });
-        }
-
-        private void HandleUserCreation(AskToCreateUser message)
-        {
-            IActorRef sender = Sender;
-            string requestId = Guid.NewGuid().ToString();
-
-            CreateUser(message)
-                .ContinueWith(result =>
-                {
-                    if (result.Exception != null)
-                        sender.Tell(ActorResponse.Failure(requestId, result.Exception.Message));
-                    else
-                        sender.Tell(ActorResponse.Success(requestId, result.Result));
-                });
-
         }
 
         //////////////////////////////////////////

@@ -29,7 +29,6 @@ namespace FarmCraft.Community.Tests
     {
         private IServiceProvider? _serviceProvider { get; set; }
         private TestSettings? _settings;
-        private EncryptionSettings? _encryptionSettings { get; set; }
 
         [OneTimeSetUp]
         public void Init()
@@ -46,10 +45,6 @@ namespace FarmCraft.Community.Tests
                 TestSettings settings = new();
                 config.Bind("TestSettings", settings);
                 _settings = settings;
-
-                EncryptionSettings encryptionSettings = new();
-                config.Bind("EncryptionSettings", encryptionSettings);
-                _encryptionSettings = encryptionSettings;
 
                 _serviceProvider = new ServiceCollection()
                     .Configure<EncryptionSettings>(config.GetSection("EncryptionSettings"))

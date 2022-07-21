@@ -1,0 +1,39 @@
+FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
+WORKDIR /app
+
+# Open 8081 for actor communication
+EXPOSE 8081
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+
+COPY ["FarmCraft.Community.Api/FarmCraft.Community.Api.csproj", "FarmCraft.Community.Api/"]
+COPY ["FarmCraft.Community.Core/FarmCraft.Community.Core.csproj", "FarmCraft.Community.Core/"]
+COPY ["FarmCraft.Community.Data/FarmCraft.Community.Data.csproj", "FarmCraft.Community.Data/"]
+COPY ["FarmCraft.Community.Services/FarmCraft.Community.Services.csproj", "FarmCraft.Community.Services/"]
+
+COPY ["FarmCraft.Community.Migrations/FarmCraft.Community.Migrations.csproj", "FarmCraft.Community.Migrations/"]
+COPY ["FarmCraft.Community.Utilities/FarmCraft.Community.Utilities.csproj", "FarmCraft.Community.Utilities/"]
+
+RUN dotnet restore "FarmCraft.Community.Api/FarmCraft.Community.Api.csproj"
+COPY ["FarmCraft.Community.Api/", "FarmCraft.Community.Api/"]
+COPY ["FarmCraft.Community.Core/", "FarmCraft.Community.Core/"]
+COPY ["FarmCraft.Community.Data/", "FarmCraft.Community.Data/"]
+COPY ["FarmCraft.Community.Services/", "FarmCraft.Community.Services/"]
+
+COPY ["FarmCraft.Community.Migrations/", "FarmCraft.Community.Migrations/"]
+COPY ["FarmCraft.Community.Utilities/", "FarmCraft.Community.Utilities/"]
+
+WORKDIR "/src/FarmCraft.Community.Api"
+RUN dotnet build "FarmCraft.Community.Api.csproj" -c Release -o /app/build
+
+RUN rm "../FarmCraft.Community.Core/appsettings.json"
+RUN rm "../FarmCraft.Community.Core/appsettings.Development.json"
+
+FROM build AS publish
+RUN dotnet publish "FarmCraft.Community.Api.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "FarmCraft.Community.Api.dll"]

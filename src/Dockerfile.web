@@ -1,0 +1,40 @@
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
+
+# Open 80 / 443 for web requests
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+
+COPY ["FarmCraft.Community.WebPortal/FarmCraft.Community.WebPortal.csproj", "FarmCraft.Community.WebPortal/"]
+COPY ["FarmCraft.Community.Core/FarmCraft.Community.Core.csproj", "FarmCraft.Community.Core/"]
+COPY ["FarmCraft.Community.Data/FarmCraft.Community.Data.csproj", "FarmCraft.Community.Data/"]
+COPY ["FarmCraft.Community.Services/FarmCraft.Community.Services.csproj", "FarmCraft.Community.Services/"]
+
+COPY ["FarmCraft.Community.Migrations/FarmCraft.Community.Migrations.csproj", "FarmCraft.Community.Migrations/"]
+COPY ["FarmCraft.Community.Utilities/FarmCraft.Community.Utilities.csproj", "FarmCraft.Community.Utilities/"]
+
+RUN dotnet restore "FarmCraft.Community.WebPortal/FarmCraft.Community.WebPortal.csproj"
+COPY ["FarmCraft.Community.WebPortal/", "FarmCraft.Community.WebPortal/"]
+COPY ["FarmCraft.Community.Core/", "FarmCraft.Community.Core/"]
+COPY ["FarmCraft.Community.Data/", "FarmCraft.Community.Data/"]
+COPY ["FarmCraft.Community.Services/", "FarmCraft.Community.Services/"]
+
+COPY ["FarmCraft.Community.Migrations/", "FarmCraft.Community.Migrations/"]
+COPY ["FarmCraft.Community.Utilities/", "FarmCraft.Community.Utilities/"]
+
+WORKDIR "/src/FarmCraft.Community.WebPortal"
+RUN dotnet build "FarmCraft.Community.WebPortal.csproj" -c Release -o /app/build
+
+RUN rm "../FarmCraft.Community.Core/appsettings.json"
+RUN rm "../FarmCraft.Community.Core/appsettings.Development.json"
+
+FROM build AS publish
+RUN dotnet publish "FarmCraft.Community.WebPortal.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT [ "dotnet", "FarmCraft.Community.WebPortal.dll"]

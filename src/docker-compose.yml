@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  core:
+    build:
+      context: .
+      dockerfile: Dockerfile.core
+    environment:
+      DOTNET_ENVIRONMENT: Development
+    ports:
+      - 8080:8080
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - 5000:80
+      - 5001:443
+      - 8081:8081
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - 8000:80
+      - 8001:443
+
+  database:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: soemthing
+      POSTGRES_PASSWORD: something

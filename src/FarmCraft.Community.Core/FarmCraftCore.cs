@@ -46,7 +46,7 @@ namespace FarmCraft.Community.Core
                     dot-netty.tcp {
                         port = 8080
                         hostname = 0.0.0.0
-                        public-hostname = localhost
+                        public-hostname = core
                     }
                 }
             }

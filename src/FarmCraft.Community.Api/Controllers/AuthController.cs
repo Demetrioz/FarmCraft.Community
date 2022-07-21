@@ -9,12 +9,19 @@ using Microsoft.Extensions.Options;
 
 namespace FarmCraft.Community.Api.Controllers
 {
-    [Route("authentication")]
+    [Route("{tenantId}/authentication")]
     public class AuthController : FarmCraftController
     {
         public AuthController(IActorRef root, IOptions<AppSettings> settings) 
             : base(root, settings)
         {
+        }
+
+        [HttpGet("test")]
+        public bool Test(Guid tenantId)
+        {
+            var test = true;
+            return test;
         }
 
         [HttpPost("login")]
